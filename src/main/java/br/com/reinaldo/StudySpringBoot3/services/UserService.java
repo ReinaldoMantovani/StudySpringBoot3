@@ -12,6 +12,7 @@ import br.com.reinaldo.StudySpringBoot3.entities.User;
 import br.com.reinaldo.StudySpringBoot3.repositories.UserRepository;
 import br.com.reinaldo.StudySpringBoot3.resources.exceptions.DatabaseException;
 import br.com.reinaldo.StudySpringBoot3.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 
 
 @Service
@@ -45,9 +46,13 @@ public class UserService {
 	}
 	
 	public User update(Long id, User obj) {
+		try {
 		User entity = repository.getReferenceById(id);
 		updateData(entity, obj);
 		return repository.save(entity);
+		} catch(EntityNotFoundException e) {
+			throw new ResourceNotFoundException(id);
+		}
 	}
 
 	private void updateData(User entity, User obj) {
